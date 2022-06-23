@@ -32,12 +32,14 @@ def get_prediction(tokens_list):
             return predictions
 
 
-
 @app.route("/")
 @cross_origin()
 def home():
     return "You are in the root directory"
 
+###
+# KEYS: 0: CONTRADICTION  1: NEUTRAL  2: ENTAILMENT
+##
 
 @app.route("/predict", methods = ['POST'])
 @cross_origin()
@@ -48,14 +50,39 @@ def prediction():
     # parse json
     # request_data = { "prompts" : [['Mars is a planet', 'Mars is a planet'], ['Mars is a planet', 'Mars is # not a planet']]}
 
+    # switch to logger here?
     print(request_data["prompts"])
 
     # call the model function, pass in prompts from body
 
-    predictions = get_prediction(request_data["prompts"])
-    print(predictions)
-    # return the predictions, incl. status code
+    try:
+      predictions = get_prediction(request_data["prompts"])
+      print(predictions)
+      return {"status": "ok", "predictions": predictions}, 200
 
-    return {"predictions": predictions}, 200
+    except Exception:
+      return {"status": "error", "message": "Predictions failed"}, 500
   else:
     return "Method not allowed", 405
+
+
+"""
+From Github Issue https://github.com/facebookresearch/fairseq/pull/4440
+
+install_requires=[
+            "cffi",
+            "cython",
+            'dataclasses; python_version<"3.7"',
+            "hydra-core>=1.0.7,<1.1",
+            "omegaconf<2.1",
+            'numpy<1.20.0; python_version<"3.7"',
+            'numpy; python_version>="3.7"',
+            "regex",
+            "sacrebleu>=1.4.12",
+            "torch",
+            "tqdm",
+            "bitarray",
+            "torchaudio>=0.8.0",
+        ],
+
+Not all of those are needed. Most important are the correct versions of hydra-core (install this first) and omegaconf"""
