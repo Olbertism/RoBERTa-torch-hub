@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 import time
-import secrets
+import os
 import config
 import torch
 
@@ -49,7 +49,7 @@ def prediction():
 
     args = request.args.to_dict()
     print(args)
-    if args.get("api-key") != config.api_key:
+    if args.get("api-key") != os.environ.get('ROBERTAKEY'):
       return {"status": "error", "message": "Request forbidden"}, 403
 
     request_data = request.get_json()
