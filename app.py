@@ -1,6 +1,8 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 import time
+import secrets
+import config
 import torch
 
 app = Flask(__name__)
@@ -8,7 +10,6 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 roberta = torch.hub.load('pytorch/fairseq', 'roberta.large.mnli')
-# -> ideally, in this init it should load if called first time, but then be kept suspended. Id like to have the model on the server in a constant "loaded" state to keep time down. We will see if this is possible...
 roberta.eval()
 
 def get_prediction(tokens_list):
@@ -45,6 +46,12 @@ def home():
 @cross_origin()
 def prediction():
   if request.method == 'POST':
+
+    args = request.args.to_dict()
+    print(args)
+    if args.get("api-key") != config.api_key:
+      return {"status": "error", "message": "Request forbidden"}, 403
+
     request_data = request.get_json()
     # accept a json body
     # parse json
@@ -58,12 +65,12 @@ def prediction():
     try:
       predictions = get_prediction(request_data["prompts"])
       print(predictions)
-      return {"status": "ok", "predictions": predictions}, 200
+      return {"status": "ok", "message" : "Request successful", "predictions": predictions}, 200
 
     except Exception:
       return {"status": "error", "message": "Predictions failed"}, 500
   else:
-    return "Method not allowed", 405
+    return {"status": "error", "message": "Method not allowed"}, 405
 
 
 """
@@ -86,3 +93,16 @@ install_requires=[
         ],
 
 Not all of those are needed. Most important are the correct versions of hydra-core (install this first) and omegaconf"""
+
+
+"""
+Model source:
+https://github.com/facebookresearch/fairseq
+@inproceedings{ott2019fairseq,
+  title = {fairseq: A Fast, Extensible Toolkit for Sequence Modeling},
+  author = {Myle Ott and Sergey Edunov and Alexei Baevski and Angela Fan and Sam Gross and Nathan Ng and David Grangier and Michael Auli},
+  booktitle = {Proceedings of NAACL-HLT 2019: Demonstrations},
+  year = {2019},
+}
+
+"""
