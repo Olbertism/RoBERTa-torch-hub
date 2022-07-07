@@ -8,7 +8,9 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-roberta = torch.hub.load('pytorch/fairseq', 'roberta.large.mnli')
+# Size around 750MB
+# roberta = torch.hub.load('pytorch/fairseq', 'roberta.large.mnli')
+roberta = torch.hub.load('pytorch/fairseq', 'roberta.base')
 roberta.eval()
 
 def get_prediction(tokens_list):
