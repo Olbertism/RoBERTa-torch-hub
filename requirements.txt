@@ -20,3 +20,4 @@ torch==1.11.0+cpu
 tqdm==4.64.0
 typing_extensions==4.2.0
 urllib3==1.26.9
+gunicorn==20.1.0
