@@ -2,7 +2,6 @@ from flask import Flask, request
 from flask_cors import CORS, cross_origin
 import time
 import os
-import config
 import torch
 
 app = Flask(__name__)
