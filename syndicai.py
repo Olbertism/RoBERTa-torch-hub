@@ -5,7 +5,7 @@ import torch
 
 class PythonPredictor:
 
-    def __init__(self):
+    def __init__(self, config):
         """ Download pretrained model. """
         self.model = torch.hub.load('pytorch/fairseq', 'roberta.large.mnli')
         self.model.eval()
