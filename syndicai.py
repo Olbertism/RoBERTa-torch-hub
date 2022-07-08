@@ -10,7 +10,7 @@ class PythonPredictor:
         self.model = torch.hub.load('pytorch/fairseq', 'roberta.large.mnli')
         self.model.eval()
 
-    def predict(self, tokens_list):
+    def predict(self, payload):
         '''
         tokens_list: expects a list with list, each sublist 2 items
         '''
@@ -19,7 +19,7 @@ class PythonPredictor:
 
             start = time.perf_counter()
 
-            for tokens in tokens_list:
+            for tokens in payload:
                 encoded_prompt = self.model.encode(tokens[0], tokens[1])
                 prediction = self.model.predict('mnli', encoded_prompt).argmax().item()
 
