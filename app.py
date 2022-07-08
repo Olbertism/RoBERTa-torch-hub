@@ -3,14 +3,14 @@ from flask_cors import CORS, cross_origin
 import time
 import os
 import torch
+# from fairseq.models.roberta import RobertaModel
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Size around 750MB
-# roberta = torch.hub.load('pytorch/fairseq', 'roberta.large.mnli')
-roberta = torch.hub.load('pytorch/fairseq', 'roberta.base')
+roberta = torch.hub.load('pytorch/fairseq', 'roberta.large.mnli')
 roberta.eval()
 
 def get_prediction(tokens_list):
